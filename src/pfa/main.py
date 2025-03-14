@@ -18,6 +18,6 @@ async def get_public_key():
 async def register():
     return {"message": "注册成功"}
 
-@app.get("/api/login/login")
+@app.post("/api/login/login")
 async def bur():
     return {"message": "登录成功"}

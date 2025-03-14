@@ -1,0 +1,1 @@
+poetry run uvicorn pfa.main:app --reload
