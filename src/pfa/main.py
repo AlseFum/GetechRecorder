@@ -29,7 +29,7 @@ async def dlogin(item:Item):
     _,name=name
     _,key=key
     return {"message":server_login(private_key,name,client_encrypt_data(public_key_pem,key))} 
-
+import base64
 @app.post("/api/login/register")
 # 定义一个异步函数 register，用于注册某个项目
 async def register(item:Item):
@@ -37,11 +37,11 @@ async def register(item:Item):
     (name,key)=item
     _,name=name
     _,key=key
-    return {"message":server_register(private_key,name,key)}
+    return {"message":server_register(private_key,name,base64.b64decode(key))}
 
 @app.post("/api/login/login")
 async def bur(item:Item):
     (name,key)=item
     _,name=name
     _,key=key
-    return {"message":server_login(private_key,name,key)}
+    return {"message":server_login(private_key,name,base64.b64decode(key))}
