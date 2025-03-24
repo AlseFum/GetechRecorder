@@ -45,3 +45,11 @@ async def bur(item:Item):
     _,name=name
     _,key=key
     return {"message":server_login(private_key,name,base64.b64decode(key))}
+
+class MockContent(BaseModel):
+    content:str
+@app.post("/debug/mock")
+async def mock(item:MockContent):
+    (content,)=item
+    (_,v)=content
+    return {"content":v}
