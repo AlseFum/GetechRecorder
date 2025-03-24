@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 [project]
 name = "pfa"
 version = "0.1.0"
@@ -15,10 +16,22 @@ dependencies = [
     "pydantic (>=2.10.6,<3.0.0)"
 ]
 
+=======
+>>>>>>> Stashed changes
 [tool.poetry]
-packages = [{include = "pfa", from = "src"}]
+name = "getechserver"
+version = "0.0.1"
+description = "A server just for development"
+authors = ["Alsefum"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.11"
+uvicorn = "^0.34.0"
+cryptography = "^44.0.2"
 
 
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
+requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
