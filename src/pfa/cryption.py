@@ -3,6 +3,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.backends import default_backend
 import hashlib
 import os
+from .db import store_user, get_user
 
 # ------------------- 密钥管理 -------------------
 def load_or_generate_private_key(private_key_path="private_key.pem"):
@@ -77,26 +78,15 @@ def hash_password(password: str, salt: bytes) -> bytes:
         100000  # 推荐迭代次数
     )
 
-def verify_password(stored_hash: bytes, salt: bytes, input_password: str) -> bool:
+def verify_password(stored_hash: bytes, salt: bytes, input_password) -> bool:
     """验证密码"""
     input_hash = hash_password(input_password, salt)
+    stored_hash=bytes(stored_hash)
+    print(type(input_hash),input_hash,"\n",type(stored_hash),stored_hash)
     return input_hash == stored_hash
 
-# ------------------- 数据库模拟 -------------------
-class Database:
-    def __init__(self):
-        self.store = {}
-    
-    def store_user(self, label: str, salt: bytes, hashed_password: bytes):
-        self.store[label] = (salt, hashed_password)
-    
-    def get_user(self, label: str):
-        return self.store.get(label, (None, None))
-
-db = Database()
-
 # ------------------- 服务端逻辑 -------------------
-def server_register(private_key, label,encrypted_data):
+def server_register(private_key, label, encrypted_data,plain_password=False):
     """处理注册请求"""
     try:
         # 解密数据
@@ -107,18 +97,17 @@ def server_register(private_key, label,encrypted_data):
         hashed_password = hash_password(password, salt)
         
         # 存储到数据库
-        db.store_user(label, salt, hashed_password)
-        return True
+        return store_user(label, salt, hashed_password)
     except Exception as e:
         print(f"注册失败: {str(e)}")
         return False
 
-def server_login(private_key, label,encrypted_data: bytes):
+def server_login(private_key, label, encrypted_data: bytes):
     """处理登录请求"""
     try:
         password = server_decrypt_data(private_key, encrypted_data)
         # 获取存储的盐值和哈希
-        salt, stored_hash = db.get_user(label)
+        salt, stored_hash = get_user(label)
         if salt is None:
             return False  # 用户不存在
         return verify_password(stored_hash, salt, password)
